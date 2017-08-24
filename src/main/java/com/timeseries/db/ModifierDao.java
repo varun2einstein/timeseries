@@ -8,10 +8,16 @@ import com.timeseries.util.Queries;
 
 public class ModifierDao extends DBSetup{
 	
+	private static final Double DEFAULT_MODIFIER=1.00;
+	
 	public Double getModifierForInstrument(String modifierName) throws SQLException {
 		PreparedStatement ps=getConnection().prepareStatement(Queries.GET_MODIFIER_FOR_INSTRUMENT);
+		ps.setString(1, modifierName);
 		ResultSet rs=ps.executeQuery();
-		Double modifier=rs.getDouble(1);
+		Double modifier=DEFAULT_MODIFIER;
+		while(rs.next()) {
+		 modifier=rs.getDouble(1);
+		}
 		return modifier;
 	}
 }

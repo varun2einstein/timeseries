@@ -23,7 +23,7 @@ public class DBSetup {
 	private static final String DBURL = "jdbc:derby:testdb;create=true";
 	private static final String INSTRUMENT_PRICE_MODIFIER_PROPERTIES = "intrument-modifier.properties";
 
-	public void connect() throws SQLException {
+	private void connect() throws SQLException {
 		try {
 			connection = DriverManager.getConnection(DBURL);
 			logger.info("database connection established");

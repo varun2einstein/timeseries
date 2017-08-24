@@ -1,31 +1,20 @@
 package com.timeseries.db;
 
+import static org.junit.Assert.assertTrue;
+
 import java.sql.SQLException;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.timeseries.db.ModifierDao;
 
-public class TestModifierDao {
+public class TestModifierDao extends TestDBSetup{
 
 	private static ModifierDao modifierDao= new ModifierDao();
 	
-	@BeforeClass
-	public static void init() throws SQLException {
-		modifierDao.connect();
-		modifierDao.initTables();
-	}
-	
 	@Test
-	public void test() throws SQLException {
-		modifierDao.
-	}
-
-	@AfterClass
-	public static void destroy() throws SQLException {
-		modifierDao.dropTables();
-		modifierDao.closeConnection();
+	public void testGetModifierForInstrument() throws SQLException {
+		Double value=modifierDao.getModifierForInstrument("INSTRUMENT1");
+		assertTrue(value==2.00);
 	}
 }
