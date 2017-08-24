@@ -4,7 +4,7 @@ import java.util.Date;
 
 import com.timeseries.model.Record;
 
-public class MeanInDateRangeAlgo extends MeanCalcAlgo{
+public class MeanInDateRangeAlgorithm extends MeanCalcAlgorithm{
 
 	
 	private Date startDate= new Date(Long.MIN_VALUE);

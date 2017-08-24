@@ -3,7 +3,7 @@ package com.timeseries.algo.impl;
 import com.timeseries.algo.Algorithm;
 import com.timeseries.model.Record;
 
-public class MeanCalcAlgo implements Algorithm {
+public class MeanCalcAlgorithm implements Algorithm {
 
 	protected Double currentMean;
 	protected int numCount;
