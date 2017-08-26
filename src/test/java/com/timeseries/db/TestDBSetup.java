@@ -7,23 +7,34 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import org.junit.Before;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
-import com.timeseries.AbstractTest;
+import com.timeseries.CommonTest;
 
-public class TestDBSetup extends AbstractTest{
-
-	private static final String GET_INSTRUMENT_MODIFIERS_COUNT="SELECT COUNT(*) from INSTRUMENT_PRICE_MODIFIER";
+public class TestDBSetup {
 	
-	@Before
+	private static final String GET_INSTRUMENT_MODIFIERS_COUNT="SELECT COUNT(*) from INSTRUMENT_PRICE_MODIFIER";
+
+	@BeforeClass
+	public static void init() throws SQLException, IOException {
+		CommonTest.init();
+	}
+	
+	@Test
 	public void testloadInstrumentPriceModifiers() throws IOException, SQLException {
-		dbSetup.loadInstrumentPriceModifiers();
-		PreparedStatement ps= dbSetup.getConnection().prepareStatement(GET_INSTRUMENT_MODIFIERS_COUNT);
+		PreparedStatement ps= CommonTest.dbSetup.getConnection().prepareStatement(GET_INSTRUMENT_MODIFIERS_COUNT);
 		ResultSet rs=ps.executeQuery();
 		int rowCount=0;
 		while(rs.next()) {
 			rowCount=rs.getInt(1);
 		}
-		assertTrue(rowCount==3);
+		assertTrue(rowCount==CommonTest.properties.size());
+	}
+	
+	@AfterClass
+	public static void destroy() throws SQLException {
+		CommonTest.destroy();
 	}
 }

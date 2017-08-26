@@ -26,4 +26,8 @@ public class Record {
 	public void setValue(double value) {
 		this.value = value;
 	}
+	@Override
+	public String toString() {
+		return "Record [instrumentName=" + instrumentName + ", readingDate=" + readingDate + ", value=" + value + "]";
+	}
 }
