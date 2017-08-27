@@ -1,50 +1,104 @@
 package com.timeseries.service;
 
 import java.util.Map;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.timeseries.instrument.handler.InstrumentHandler;
+import com.timeseries.instrument.handler.impl.InstrumentHandlerImpl;
 import com.timeseries.model.Record;
-import com.timeseries.util.DateUtil;
 
 public class RecordHandler {
 
-	private static final Map<String,InstrumentHandler> handlerMap;
-	private static final Logger LOGGER= LoggerFactory.getLogger(RecordHandler.class);
-	
+	private static final Map<String, InstrumentHandler> handlerMap;
+	private static final Logger LOGGER = LoggerFactory.getLogger(RecordHandler.class);
+	private static final int MAX_CAPACITY = 50;
+	private final BlockingQueue<Task> recordQueue = new LinkedBlockingQueue<>(MAX_CAPACITY);
+	private static final Logger logger = LoggerFactory.getLogger(RecordHandler.class);
+
+	private volatile boolean stopProcessing = false;
+	private volatile boolean isProcessingDone=false;
+
 	static {
-		InstrumentHandlerLoader loader=new InstrumentHandlerLoader();
-		handlerMap=loader.getInstrumentHandlerMapping();
-	}
-	
-	public RecordHandler() {
+		InstrumentHandlerLoader loader = new InstrumentHandlerLoader();
+		handlerMap = loader.getInstrumentHandlerMapping();
 	}
 
-	
+	public RecordHandler() {
+
+		new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				while (!stopProcessing) {
+					Task task = null;
+					try {
+						task = recordQueue.take();
+						if (task.getRecord().isLastRecord()) {
+							break;
+						}
+						task.run();
+					} catch (InterruptedException e) {
+						logger.error("Interrupted wile processing record " + (task == null ? "" : task.getRecord()));
+						e.printStackTrace();
+					}
+				}
+				isProcessingDone=true;
+				logger.debug("Terminating the internal active thread of record handler");
+			}
+		}).start();
+
+	}
 
 	public static Map<String, InstrumentHandler> getHandlerMap() {
 		return handlerMap;
 	}
 
-
-
-	public boolean submit(Record record) {
-		//apply modifier to the record value
-		
-		InstrumentHandler instrumentHandler=handlerMap.get(record.getInstrumentName());
-		if(instrumentHandler==null) {
-			LOGGER.error("No instrument handler found for Record :"+ record.toString());
-			return false;
+	public boolean submit(final Record record) {
+		try {
+			Task task = new Task();
+			task.setRecord(record);
+			recordQueue.put(task);
+		} catch (InterruptedException e) {
+			logger.error("Interrupted while processing record :" + record.toString());
+			Thread.currentThread().interrupt();
 		}
-		if(DateUtil.isNonBusinessDate(record.getReadingDate())) {
-			LOGGER.error("Not a business Day, skipping record :"+record.toString());
-			return false;
-		}
-		instrumentHandler.handle(record);
 		return true;
 	}
-	
-	
+
+	public Double getCurrentValueForInstrument(String instrumentName) {
+		InstrumentHandler instruHandler = handlerMap.get(instrumentName);
+		if (instruHandler == null) {
+			LOGGER.error("Unable to fetch instrument handler for instrument " + instrumentName + " no mapping");
+		}
+
+		Double currentValue = ((InstrumentHandlerImpl) instruHandler).getValue().doubleValue();
+		return currentValue;
+	}
+
+	public boolean isStopProcessing() {
+		return stopProcessing;
+	}
+
+	public void setStopProcessing(boolean stopProcessing) {
+		this.stopProcessing = stopProcessing;
+	}
+
+	public boolean isWorkQueueProcessed() {
+		return recordQueue.isEmpty();
+	}
+
+	public boolean isProcessingDone() {
+		return isProcessingDone;
+	}
+
+	public void setProcessingDone(boolean isProcessingDone) {
+		this.isProcessingDone = isProcessingDone;
+	}
 }

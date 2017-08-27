@@ -1,8 +1,8 @@
 package com.timeseries.service;
 
 import java.text.ParseException;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +16,7 @@ import com.timeseries.instrument.handler.impl.InstrumentHandlerImpl;
 
 public class InstrumentHandlerLoader {
 
-	private Map<String, InstrumentHandler> instrumentHandlerMapping = new HashMap<>();
+	private Map<String, InstrumentHandler> instrumentHandlerMapping = new ConcurrentHashMap<>();
 	private static final String INSTRUMENT1 = "INSTRUMENT1";
 	private static final String INSTRUMENT2 = "INSTRUMENT2";
 	private static final String INSTRUMENT3 = "INSTRUMENT3";

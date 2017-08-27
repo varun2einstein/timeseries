@@ -11,27 +11,38 @@ import org.junit.Test;
 
 import com.timeseries.CommonTest;
 import com.timeseries.data.RecordTestData;
-import com.timeseries.instrument.handler.impl.InstrumentHandlerImpl;
 import com.timeseries.model.Record;
 
 public class TestRecordHandler {
 
-	private static final RecordHandler recordHandler= new RecordHandler();
+	private static final RecordHandler recordHandler = new RecordHandler();
 
 	@BeforeClass
 	public static void init() throws SQLException, IOException {
 		CommonTest.init();
 	}
-	
+
 	@Test
-	public void testSubmitRecord() {
-		for(Record record:RecordTestData.recordsInstrument1) {
+	public void testSubmitRecord() throws InterruptedException {
+		for (Record record : RecordTestData.recordsInstrument1) {
 			recordHandler.submit(record);
 		}
-		InstrumentHandlerImpl actualHandler=(InstrumentHandlerImpl)recordHandler.getHandlerMap().get(CommonTest.INSTRUMENT1);
-		assertTrue(RecordTestData.meanOfInstrument1().compareTo(actualHandler.getValue().doubleValue())==0);
+		Record lastRecord = new Record();
+		lastRecord.setLastRecord(true);
+		recordHandler.submit(lastRecord);
+
+		Double value = 0.00;
+		while (true) {
+			if(recordHandler.isProcessingDone()) {
+				value = recordHandler.getCurrentValueForInstrument(CommonTest.INSTRUMENT1);
+				break;
+			}
+		}
+
+		assertTrue(RecordTestData.meanOfInstrument1().compareTo(value) == 0);
+
 	}
-	
+
 	@AfterClass
 	public static void destroy() throws SQLException {
 		CommonTest.destroy();

@@ -7,6 +7,7 @@ public class Record {
 	private String instrumentName;
 	private Date readingDate;
 	private double value;
+	private boolean isLastRecord=false;
 	
 	public String getInstrumentName() {
 		return instrumentName;
@@ -29,5 +30,11 @@ public class Record {
 	@Override
 	public String toString() {
 		return "Record [instrumentName=" + instrumentName + ", readingDate=" + readingDate + ", value=" + value + "]";
+	}
+	public boolean isLastRecord() {
+		return isLastRecord;
+	}
+	public void setLastRecord(boolean isLastRecord) {
+		this.isLastRecord = isLastRecord;
 	}
 }
