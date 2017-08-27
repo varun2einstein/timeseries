@@ -10,6 +10,16 @@ public class ModifierDao extends DBSetup{
 	
 	private static final Double DEFAULT_MODIFIER=1.00;
 	
+	private static final ModifierDao INSTANCE= new ModifierDao();
+	
+	private ModifierDao() {
+		
+	}
+	
+	public static ModifierDao getModifierDao() {
+		return INSTANCE;
+	}
+	
 	public Double getModifierForInstrument(String modifierName) throws SQLException {
 		PreparedStatement ps=getConnection().prepareStatement(Queries.GET_MODIFIER_FOR_INSTRUMENT);
 		ps.setString(1, modifierName);

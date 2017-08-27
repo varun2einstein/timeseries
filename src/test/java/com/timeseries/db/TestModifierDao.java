@@ -14,8 +14,6 @@ import com.timeseries.db.ModifierDao;
 
 public class TestModifierDao{
 
-	private static ModifierDao modifierDao= new ModifierDao();
-	
 	@BeforeClass
 	public static void init() throws SQLException, IOException {
 		CommonTest.init();
@@ -23,7 +21,7 @@ public class TestModifierDao{
 	
 	@Test
 	public void testGetModifierForInstrument() throws SQLException {
-		Double value=modifierDao.getModifierForInstrument(CommonTest.INSTRUMENT1);
+		Double value=ModifierDao.getModifierDao().getModifierForInstrument(CommonTest.INSTRUMENT1);
 		assertTrue(CommonTest.properties.getProperty(CommonTest.INSTRUMENT1)!=null);
 		assertTrue(value==Double.parseDouble(CommonTest.properties.getProperty(CommonTest.INSTRUMENT1)));
 	}

@@ -10,9 +10,9 @@ import org.slf4j.LoggerFactory;
 import com.timeseries.algo.Algorithm;
 import com.timeseries.algo.impl.MeanCalcAlgorithm;
 import com.timeseries.algo.impl.MeanInDateRangeAlgorithm;
+import com.timeseries.db.ModifierDao;
 import com.timeseries.instrument.handler.InstrumentHandler;
 import com.timeseries.instrument.handler.impl.InstrumentHandlerImpl;
-import com.timeseries.util.DateUtil;
 
 public class InstrumentHandlerLoader {
 
@@ -57,6 +57,7 @@ public class InstrumentHandlerLoader {
 	private InstrumentHandler createInstrumentHandler(Algorithm algorithm) {
 		InstrumentHandlerImpl instrumentHandler = new InstrumentHandlerImpl();
 		instrumentHandler.setAlgorithm(algorithm);
+		instrumentHandler.setModifierDao(ModifierDao.getModifierDao());
 		return instrumentHandler;
 	}
 
