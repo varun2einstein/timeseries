@@ -17,12 +17,12 @@ public class FileSplitter {
 	private static final Logger logger = LoggerFactory.getLogger(FileSplitter.class);
 	private static final int MAX_ROWS = 100;
 
-	public void splitFile(String filePath) {
+	public static void splitFile(String filePath) {
 		File file = new File(filePath);
 		createParts(file);
 	}
 
-	private void createParts(File file) {
+	private static void createParts(File file) {
 		FileInputStream fis;
 		try {
 			fis = new FileInputStream(file);
@@ -40,7 +40,7 @@ public class FileSplitter {
 		int currentLineNumber = 0;
 		File partFile = null;
 		String filePartName = null;
-		FileWriter out=null;
+		FileWriter out = null;
 		// in a loop read lines
 		try {
 			while ((currentline = bufr.readLine()) != null) {
@@ -56,7 +56,7 @@ public class FileSplitter {
 				}
 				// write the line to partfile
 
-				out.write(currentline+System.lineSeparator());
+				out.write(currentline + System.lineSeparator());
 				currentLineNumber++;
 			}
 		} catch (IOException e) {
@@ -71,5 +71,19 @@ public class FileSplitter {
 				}
 			}
 		}
+	}
+
+	public static boolean deleteAllPartitions(File directory, String pattern) {
+		if (directory.isDirectory()) {
+			File[] files = directory.listFiles();
+
+			for (File f : files) {
+				if (f.getName().matches(pattern + ".+")) {
+					f.delete();
+				}
+			}
+		}
+		return true;
+
 	}
 }

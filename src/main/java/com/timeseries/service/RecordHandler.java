@@ -2,10 +2,7 @@ package com.timeseries.service;
 
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +20,7 @@ public class RecordHandler {
 	private static final Logger logger = LoggerFactory.getLogger(RecordHandler.class);
 
 	private volatile boolean stopProcessing = false;
-	private volatile boolean isProcessingDone=false;
+	private volatile boolean isProcessingDone = false;
 
 	static {
 		InstrumentHandlerLoader loader = new InstrumentHandlerLoader();
@@ -36,8 +33,8 @@ public class RecordHandler {
 
 			@Override
 			public void run() {
+				Task task = null;
 				while (!stopProcessing) {
-					Task task = null;
 					try {
 						task = recordQueue.take();
 						if (task.getRecord().isLastRecord()) {
@@ -46,10 +43,10 @@ public class RecordHandler {
 						task.run();
 					} catch (InterruptedException e) {
 						logger.error("Interrupted wile processing record " + (task == null ? "" : task.getRecord()));
-						e.printStackTrace();
+						Thread.currentThread().interrupt();
 					}
 				}
-				isProcessingDone=true;
+				isProcessingDone = true;
 				logger.debug("Terminating the internal active thread of record handler");
 			}
 		}).start();

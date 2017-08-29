@@ -3,6 +3,7 @@ package com.timeseries.instrument.handler.impl;
 import java.io.IOException;
 import java.sql.SQLException;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
 import com.timeseries.CommonTest;
@@ -14,12 +15,12 @@ import com.timeseries.model.Record;
 public class TestInstrumentHandlerImpl {
 
 	private static InstrumentHandlerImpl instruHandler;
-	
+	private static Algorithm algorithm;
 	@BeforeClass
 	public static void init() throws SQLException, IOException {
 		CommonTest.init();
 		instruHandler= new InstrumentHandlerImpl();
-		Algorithm algorithm= new MeanCalcAlgorithm();
+		algorithm= new MeanCalcAlgorithm();
 		instruHandler.setAlgorithm(algorithm);
 	}
 	
@@ -29,5 +30,12 @@ public class TestInstrumentHandlerImpl {
 			instruHandler.handle(record);
 		}
 		
+	}
+	
+	@AfterClass
+	public static void destroy() throws SQLException {
+		CommonTest.destroy();
+		instruHandler= null;
+		algorithm= null;
 	}
 }

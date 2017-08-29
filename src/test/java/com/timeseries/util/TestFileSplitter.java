@@ -33,15 +33,7 @@ public class TestFileSplitter {
 		
 		File directory=file.getParentFile();
 		
-		if(directory.isDirectory()) {
-			File[] files=directory.listFiles();
-			
-			for(File f:files) {
-				if(f.getName().matches(FILE_NAME+".+")) {
-					f.delete();
-				}
-			}
-		}
+		FileSplitter.deleteAllPartitions(directory,file.getName());
 		
 	}
 }
