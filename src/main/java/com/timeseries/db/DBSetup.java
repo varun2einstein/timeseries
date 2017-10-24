@@ -17,7 +17,7 @@ import com.timeseries.util.Queries;
 public class DBSetup {
 
 	protected Connection connection;
-	private static final Logger logger = LoggerFactory.getLogger(ModifierDao.class);
+	private static final Logger logger = LoggerFactory.getLogger(DBSetup.class);
 	private static final String DBURL = "jdbc:derby:testdb;create=true";
 	private static final String INSTRUMENT_PRICE_MODIFIER_PROPERTIES = "intrument-modifier.properties";
 
